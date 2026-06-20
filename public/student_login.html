@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | Kalai Spoken English</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --bg-gradient: linear-gradient(145deg, #e9f2fa 0%, #d4e3f5 50%, #c9ddf2 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 25px 45px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6);
+            --text-primary: #0b1e33;
+            --text-secondary: #2c3e50;
+            --label-color: #1e3b4f;
+            --input-bg: #f0f4fc;
+            --input-border: #ccdbe9;
+            --input-focus-border: #f28c38;
+            --input-focus-shadow: rgba(242, 140, 56, 0.25);
+            --brand-bg: linear-gradient(120deg, #f9b84a, #f28c38);
+            --brand-text: #0b1e33;
+            --avatar-bg: linear-gradient(135deg, #1e4b6e, #0f2c44);
+            --avatar-shadow: 0 15px 25px rgba(0, 20, 40, 0.3), 0 0 0 4px rgba(249, 184, 74, 0.8);
+            --btn-bg: linear-gradient(115deg, #f9b84a, #f28c38);
+            --btn-text: #0b1e33;
+            --btn-shadow: 0 12px 22px -8px rgba(242, 140, 56, 0.5);
+            --alert-bg: #fff0f0;
+            --alert-text: #c23b3b;
+            --alert-border: #ffcccc;
+            --footer-color: #4a5c6c;
+            --footer-accent: #f28c38;
+            --decorative-opacity: 0.15;
+            --icon-color: #4a5c6c;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --bg-gradient: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --label-color: #cbd5e1;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: #334155;
+            --input-focus-border: #f28c38;
+            --input-focus-shadow: rgba(242, 140, 56, 0.2);
+            --brand-bg: linear-gradient(120deg, #f9b84a, #f28c38);
+            --brand-text: #0b1e33;
+            --avatar-bg: linear-gradient(135deg, #334155, #1e293b);
+            --avatar-shadow: 0 15px 25px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(249, 184, 74, 0.6);
+            --btn-bg: linear-gradient(115deg, #f9b84a, #f28c38);
+            --btn-text: #0b1e33;
+            --btn-shadow: 0 12px 22px -8px rgba(242, 140, 56, 0.3);
+            --alert-bg: rgba(127, 29, 29, 0.2);
+            --alert-text: #fca5a5;
+            --alert-border: rgba(127, 29, 29, 0.5);
+            --footer-color: #94a3b8;
+            --footer-accent: #f28c38;
+            --decorative-opacity: 0.1;
+            --icon-color: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            margin: 0;
+            position: relative;
+            transition: background 0.4s ease, color 0.4s ease;
+            overflow: hidden;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            z-index: 100;
+            transition: transform 0.2s;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 2.5rem;
+            padding: 2.8rem 2.2rem;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.6s ease-out;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-badge {
+            background: var(--brand-bg);
+            color: var(--brand-text);
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.8px;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.8rem;
+            text-transform: uppercase;
+            box-shadow: 0 6px 14px rgba(242, 140, 56, 0.4);
+        }
+
+        .avatar-container { margin-bottom: 1.2rem; }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            background: var(--avatar-bg);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--avatar-shadow);
+            color: #fff;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.5rem;
+            color: var(--label-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--icon-color);
+            pointer-events: none;
+            display: flex;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1.2rem 1rem 3rem; /* Increased padding for icons */
+            border: 2px solid var(--input-border);
+            border-radius: 18px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--input-bg);
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--input-focus-border);
+            background: var(--input-bg);
+            box-shadow: 0 0 0 5px var(--input-focus-shadow);
+            transform: translateY(-1px);
+        }
+
+        input::placeholder {
+            color: #8d9ca8;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 18px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 0.5rem;
+            box-shadow: var(--btn-shadow);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            filter: brightness(1.08);
+            transform: translateY(-3px);
+            box-shadow: 0 18px 28px -6px rgba(242, 140, 56, 0.6);
+        }
+
+        .btn-login:active { transform: translateY(0px); }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
+            filter: brightness(0.95);
+        }
+
+        .alert {
+            background: var(--alert-bg);
+            color: var(--alert-text);
+            padding: 0.9rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            border: 1px solid var(--alert-border);
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--footer-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .footer-note span {
+            color: var(--footer-accent);
+            font-weight: 700;
+        }
+
+        .floating-shapes span {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s infinite ease-in-out;
+            opacity: var(--decorative-opacity);
+        }
+
+        .floating-shapes span:nth-child(1) {
+            width: 80px; height: 80px;
+            background: linear-gradient(45deg, #f9b84a, transparent);
+            top: 10%; left: 10%;
+            animation-delay: 0s;
+        }
+        .floating-shapes span:nth-child(2) {
+            width: 50px; height: 50px;
+            background: linear-gradient(45deg, #1e4b6e, transparent);
+            top: 70%; right: 10%;
+            animation-delay: 2s;
+        }
+        .floating-shapes span:nth-child(3) {
+            width: 60px; height: 60px;
+            background: linear-gradient(45deg, #f28c38, transparent);
+            bottom: 15%; left: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        @media (max-width: 450px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+                border-radius: 2rem;
+            }
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <i data-lucide="sun" id="theme-icon"></i>
+    </button>
+
+    <div class="floating-shapes">
+        <span></span><span></span><span></span>
+    </div>
+
+    <div class="login-card">
+        <div class="brand-badge">
+            <i data-lucide="mic" style="width:16px; height:16px;"></i> 
+            KALAI SPOKEN ENGLISH
+        </div>
+        
+        <div class="avatar-container">
+            <div class="avatar">
+                <i data-lucide="graduation-cap" style="width:40px; height:40px;"></i>
+            </div>
+        </div>
+        
+        <h1>Welcome Back!</h1>
+        <div class="subtitle">
+            <i data-lucide="sparkles" style="width:16px; height:16px; color:var(--footer-accent);"></i>
+            Speak with Confidence
+            <i data-lucide="sparkles" style="width:16px; height:16px; color:var(--footer-accent);"></i>
+        </div>
+        
+        <div id="errorBox" class="alert">
+            <i data-lucide="alert-circle" style="width:18px; height:18px;"></i>
+            <span id="errorText">Invalid ID or Password</span>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>
+                    <i data-lucide="list" style="width:14px; height:14px;"></i> 
+                    Student ID
+                </label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <i data-lucide="id-card" style="width:18px; height:18px;"></i>
+                    </span>
+                    <input type="text" id="sid" placeholder="e.g. STU-001" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <i data-lucide="key-round" style="width:14px; height:14px;"></i>
+                    Password
+                </label>
+                <div class="input-wrapper">
+                    <span class="input-icon">
+                        <i data-lucide="lock" style="width:18px; height:18px;"></i>
+                    </span>
+                    <input type="password" id="pass" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-login" id="loginBtn">
+                <span>Sign In</span>
+                <i data-lucide="log-in" style="width:18px; height:18px;"></i>
+            </button>
+        </form>
+        
+        <div class="footer-note">
+            <i data-lucide="map-pin" style="width:12px; height:12px;"></i>
+            <span>Kalai Spoken English</span> — Unlock your fluency
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Theme Toggler Logic ---
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeIcon.setAttribute('data-lucide', 'moon');
+        } else {
+            themeIcon.setAttribute('data-lucide', 'sun');
+        }
+        lucide.createIcons(); // Re-render icon
+
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons(); // Update icon
+        });
+
+        // --- Login Authentication Logic ---
+        // Points to our local Node.js Express proxy endpoint
+        const APP_URL = "/api"; 
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Retrieve UI elements
+            const btn = document.getElementById('loginBtn');
+            const btnContent = btn.querySelector('span');
+            const sid = document.getElementById('sid').value.trim();
+            const pass = document.getElementById('pass').value;
+            const errorBox = document.getElementById('errorBox');
+            const errorText = document.getElementById('errorText');
+
+            // Set loading state on button and hide previous errors
+            btnContent.textContent = "Verifying...";
+            btn.disabled = true;
+            errorBox.style.display = 'none';
+
+            try {
+                // Forward credentials to local Express API
+                // Express will relay this to Google Sheets and return a signed JWT token on success
+                const res = await fetch(`${APP_URL}?action=verifyLogin&id=${encodeURIComponent(sid)}&password=${encodeURIComponent(pass)}`);
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    // Cache session variables inside browser sessionStorage
+                    sessionStorage.setItem('studentId', sid);
+                    sessionStorage.setItem('studentName', data.name);
+                    sessionStorage.setItem('token', data.token); // Store secure JWT token for API headers
+                    
+                    // Redirect successfully authenticated student to dashboard page
+                    window.location.href = 'student_dashboard.html';
+                } else {
+                    // Handle validation failures returned by Google Sheet
+                    throw new Error(data.message || "Invalid ID or Password");
+                }
+            } catch (err) {
+                // Display error box and reset button loading states
+                errorText.textContent = err.message || "Connection Error";
+                errorBox.style.display = 'flex';
+                btnContent.textContent = "Sign In";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

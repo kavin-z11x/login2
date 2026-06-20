@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Student Analytics Pro • Ultimate Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --secondary: #EC4899;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --info: #06B6D4;
+            --purple: #8B5CF6;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-radius: 20px;
+            --border-radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+        body.dark {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+            transition: background 0.3s;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 2px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-greeting {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.6rem 1.3rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 1.5rem auto;
+            padding: 0 4%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            object-fit: cover;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-info {
+            z-index: 2;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .profile-info h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .profile-info p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin-bottom: 0.2rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.3px;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            padding: 1.5rem 1.2rem;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+        .icon-green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .icon-red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .icon-yellow { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .icon-purple { background: rgba(139, 92, 246, 0.1); color: var(--purple); }
+        .icon-cyan { background: rgba(6, 182, 212, 0.1); color: var(--info); }
+
+        .kpi-details h3 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-details h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* Charts Grid - Optimized for responsiveness */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .charts-grid-wide {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            border: 1px solid rgba(128, 128, 128, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chart-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        /* Chart Containers - Dynamic Height */
+        .chart-container {
+            height: 300px;
+            position: relative;
+            width: 100%;
+        }
+
+        .chart-container-lg {
+            height: 350px;
+            position: relative;
+            width: 100%;
+        }
+
+        .chart-container-xl {
+            height: 400px;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Table */
+        .table-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-card);
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 700px; /* Ensures table doesn't squeeze on mobile */
+        }
+
+        th {
+            background: var(--bg-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.8px;
+            padding: 1rem 0.8rem;
+            text-align: left;
+            border-radius: 8px 8px 0 0;
+        }
+
+        td {
+            padding: 0.9rem 0.8rem;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+            font-weight: 500;
+        }
+
+        tr:hover td {
+            background: rgba(79, 70, 229, 0.03);
+        }
+
+        .score-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .score-good { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .score-avg { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .score-low { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-mini {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-radius: 12px;
+        }
+
+        .stat-mini h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .stat-mini .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==========================================
+           RESPONSIVE STYLES (Mobile & Tablet)
+           ========================================== */
+
+        @media (max-width: 1024px) {
+            .charts-grid, .charts-grid-wide {
+                /* Auto-fit handles tablets well, but ensuring full width for readability */
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Navbar Adjustments */
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+                align-items: stretch;
+            }
+
+            .brand {
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+
+            .nav-controls {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .user-greeting {
+                display: none; /* Hide greeting to save space */
+            }
+
+            /* Profile Card Adjustments */
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-info h1 {
+                font-size: 1.8rem;
+            }
+
+            /* KPI Grid */
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+                gap: 1rem;
+            }
+
+            /* Chart Layout - Flex Column */
+            .charts-grid, .charts-grid-wide {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .chart-card {
+                width: 100%;
+            }
+
+            /* Chart Height for Mobile */
+            .chart-container, 
+            .chart-container-lg, 
+            .chart-container-xl {
+                height: 280px; /* Optimized height for scrolling */
+                min-height: 250px;
+            }
+
+            .chart-header {
+                justify-content: center;
+            }
+
+            .chart-title {
+                font-size: 1rem;
+            }
+
+            /* Table Container */
+            .table-card {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            /* Stats Row */
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Small phones */
+            .kpi-grid {
+                grid-template-columns: 1fr; /* Single column KPIs */
+            }
+            
+            .theme-toggle span {
+                display: none; /* Icon only for theme toggle */
+            }
+
+            .logout-btn span {
+                display: none; /* Icon only for logout */
+            }
+            
+            .logout-btn {
+                padding: 0.6rem;
+                border-radius: 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: var(--text-muted);">Loading Student Data...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="brand">
+            <i class="fa-solid fa-chart-line"></i> Kalai Spoken English
+        </div>
+        <div class="nav-controls">
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
+            </button>
+            <div class="user-menu">
+                <span class="user-greeting">👋 <strong id="navName">Student</strong></span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Profile Banner -->
+        <div class="profile-card">
+            <img id="pPhoto" src="https://ui-avatars.com/api/?name=Student&background=random&size=150"
+                class="profile-img" alt="Student Photo">
+            <div class="profile-info">
+                <h1 id="pName">Loading...</h1>
+                <p><i class="fa-regular fa-id-badge"></i> Student ID: <strong id="pId">---</strong></p>
+                <p><i class="fa-solid fa-calendar-check"></i> Enrolled: <strong id="pJoinDate">---</strong></p>
+                <div id="statusBadge" class="badge badge-active"><i class="fa-solid fa-spinner fa-spin"></i> Fetching...</div>
+            </div>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon icon-blue"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="kpi-details">
+                    <h3>Overall Average</h3>
+                    <h2 id="avgScore">0%</h2>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-green"><i class="fa-solid fa-book-open"></i></div>
+                <div class="kpi-details">
+                    <h3>Reading Avg</h3>
+                    <h2 id="avgReading">0</h2>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-red"><i class="fa-solid fa-pen-fancy"></i></div>
+                <div class="kpi-details">
+                    <h3>Writing Avg</h3>
+                    <h2 id="avgWriting">0</h2>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-yellow"><i class="fa-solid fa-microphone"></i></div>
+                <div class="kpi-details">
+                    <h3>Speaking Avg</h3>
+                    <h2 id="avgSpeaking">0</h2>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-purple"><i class="fa-solid fa-trophy"></i></div>
+                <div class="kpi-details">
+                    <h3>Best Score</h3>
+                    <h2 id="bestScore">0</h2>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-cyan"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                <div class="kpi-details">
+                    <h3>Improvement</h3>
+                    <h2 id="improvement">0%</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 1: Mixed Charts -->
+        <div class="charts-grid">
+            <div class="chart-card full-width">
+                <div class="chart-header">
+                    <span class="chart-title">📈 Overall Performance Mix</span>
+                    <span class="chart-badge">Mixed Chart</span>
+                </div>
+                <div class="chart-container-xl"><canvas id="mixedChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Row 2: Line Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">📖 Reading Progress</span>
+                </div>
+                <div class="chart-container"><canvas id="readingChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">✍️ Writing Progress</span>
+                </div>
+                <div class="chart-container"><canvas id="writingChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🎤 Speaking Progress</span>
+                </div>
+                <div class="chart-container"><canvas id="speakingChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Row 3: Radar, Polar, Doughnut -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🎯 Skill Radar Analysis</span>
+                </div>
+                <div class="chart-container"><canvas id="radarChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🌐 Polar Area Distribution</span>
+                </div>
+                <div class="chart-container"><canvas id="polarChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🍩 Score Composition</span>
+                </div>
+                <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Row 4: Scatter, Bubble, Stacked Bar -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🔵 Score Scatter Plot</span>
+                </div>
+                <div class="chart-container"><canvas id="scatterChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🫧 Performance Bubble</span>
+                </div>
+                <div class="chart-container"><canvas id="bubbleChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">📊 Stacked Skill Bars</span>
+                </div>
+                <div class="chart-container"><canvas id="stackedBarChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Row 5: Area Chart & Stats -->
+        <div class="charts-grid-wide">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">🏔️ Cumulative Area Chart</span>
+                </div>
+                <div class="chart-container-lg"><canvas id="areaChart"></canvas></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">📈 Progress Statistics</span>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-mini">
+                        <h4>Highest Reading</h4>
+                        <div class="value" style="color: var(--primary)" id="maxReading">0</div>
+                    </div>
+                    <div class="stat-mini">
+                        <h4>Highest Writing</h4>
+                        <div class="value" style="color: var(--danger)" id="maxWriting">0</div>
+                    </div>
+                    <div class="stat-mini">
+                        <h4>Highest Speaking</h4>
+                        <div class="value" style="color: var(--warning)" id="maxSpeaking">0</div>
+                    </div>
+                    <div class="stat-mini">
+                        <h4>Tests Taken</h4>
+                        <div class="value" style="color: var(--info)" id="totalTests">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+     
+   
+        <!-- Table Section -->
+        <div class="table-card">
+            <div class="chart-header">
+                <span class="chart-title">📋 Complete Assessment History</span>
+                <span class="chart-badge" id="tableCount">0 Records</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Reading</th>
+                        <th>Writing</th>
+                        <th>Speaking</th>
+                        <th>Total</th>
+                        <th>Overall</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody id="pointsTable">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">Waiting for data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // ==========================================
+            // CONFIGURATION - Local Proxy Server API
+            // ==========================================
+            const APP_URL = "/api"; 
+
+            // --- SESSION CHECK ---
+            // Verify if the student holds a valid signed JWT session token.
+            // If missing, immediately redirect them back to the login page.
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                window.location.href = "student_login.html";
+                return;
+            }
+
+            let charts = {}; // Container to store active Chart.js instances
+            
+            // Set student greeting name from session storage
+            const studentName = sessionStorage.getItem('studentName') || "Student";
+            document.getElementById('navName').textContent = studentName;
+
+            // --- THEME TOGGLE MANAGEMENT ---
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            function setTheme(isDark) {
+                if (isDark) {
+                    body.classList.add('dark');
+                    themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+                    localStorage.setItem('dashboardTheme', 'dark');
+                } else {
+                    body.classList.remove('dark');
+                    themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+                    localStorage.setItem('dashboardTheme', 'light');
+                }
+                updateAllChartThemes();
+            }
+
+            themeToggle.addEventListener('click', () => setTheme(!body.classList.contains('dark')));
+            if (localStorage.getItem('dashboardTheme') === 'dark') setTheme(true);
+
+            // Returns grid color suited for light/dark canvas modes
+            function getGridColor() {
+                return body.classList.contains('dark') ? 'rgba(148,163,184,0.15)' : 'rgba(0,0,0,0.06)';
+            }
+
+            // Updates grid scale colors for all charts dynamically on theme toggles
+            function updateAllChartThemes() {
+                const gridColor = getGridColor();
+                Object.values(charts).forEach(chart => {
+                    if (chart && chart.options && chart.options.scales) {
+                        ['x', 'y', 'r'].forEach(axis => {
+                            if (chart.options.scales[axis] && chart.options.scales[axis].grid) {
+                                chart.options.scales[axis].grid.color = gridColor;
+                            }
+                        });
+                        chart.update('none'); // silent update (no animations)
+                    }
+                });
+            }
+
+            // Destroys session keys and redirects to login layout
+            window.logout = function () {
+                sessionStorage.clear();
+                alert('Logged out successfully');
+                window.location.href = "student_login.html"; 
+            };
+
+            // ==========================================
+            // DATA FETCHING & SYNCHRONIZATION
+            // ==========================================
+            
+            /**
+             * Concurrently queries student details and points records.
+             * Authenticates via Authorization header containing JWT.
+             */
+            async function loadProfile() {
+                try {
+                    // 1. Fetch Student Profile row (Full name, Photo URL, Joining Date)
+                    const profileRes = await fetch(`${APP_URL}?action=getStudentProfile`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    // evict user if token is expired or altered
+                    if (profileRes.status === 401 || profileRes.status === 403) {
+                        sessionStorage.clear();
+                        window.location.href = "student_login.html";
+                        return;
+                    }
+
+                    const profileData = await profileRes.json();
+                    if (profileData.error) throw new Error(profileData.error);
+
+                    // 2. Fetch Points score array (Reading, Writing, Speaking records)
+                    const pointsRes = await fetch(`${APP_URL}?action=getPoints`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const pointsData = await pointsRes.json();
+
+                    // 3. Normalize and merge responses into a unified structure
+                    const data = {
+                        ...profileData,
+                        name: profileData["Full Name"] || profileData["name"] || "Student",
+                        id: profileData["Student ID"] || profileData["id"] || "STU-000",
+                        photo: profileData["Photo URL"] || profileData["photo"] || "",
+                        status: profileData["Status"] || "Active",
+                        assessments: Array.isArray(pointsData) ? pointsData.map(p => ({
+                            date: p.date,
+                            reading: Number(p.reading) || 0,
+                            writing: Number(p.writing) || 0,
+                            speaking: Number(p.speaking) || 0
+                        })) : []
+                    };
+
+                    // Format dates to DD-MM-YYYY format
+                    if (data["Joining Date"]) {
+                        const date = new Date(data["Joining Date"]);
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const month = String(date.getMonth() + 1).padStart(2, "0");
+                        const year = date.getFullYear();
+                        data["Joining Date"] = `${day}-${month}-${year}`;
+                    }
+                    
+                    // Bind values and render metrics
+                    updateProfileUI(data);
+                    initDashboard(data);
+                } catch (e) {
+                    console.error("Dashboard Load Error:", e);
+                    document.getElementById('pName').textContent = "Error Loading";
+                    document.getElementById('pId').textContent = "---";
+                    document.getElementById('statusBadge').innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Error';
+                    document.getElementById('statusBadge').className = 'badge badge-active';
+                    document.getElementById('statusBadge').style.backgroundColor = 'var(--danger)';
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                }
+            }
+
+            function updateProfileUI(data) {
+                document.getElementById('pPhoto').src = data.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random&size=150`;
+                document.getElementById('pName').textContent = data.name || 'Student';
+                document.getElementById('pId').textContent = data.id || '---';
+                document.getElementById('pJoinDate').textContent = data["Joining Date"] || '---';
+                
+                const statusBadge = document.getElementById('statusBadge');
+                if (data.status === 'Active') {
+                    statusBadge.className = 'badge badge-active';
+                    statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Active';
+                    statusBadge.style.backgroundColor = ''; // default CSS green style
+                } else {
+                    statusBadge.className = 'badge';
+                    statusBadge.style.backgroundColor = 'var(--danger)';
+                    statusBadge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Inactive';
+                }
+            }
+
+            function initDashboard(data) {
+                const assessments = data.assessments || [];
+                document.getElementById('totalTests').textContent = assessments.length;
+                document.getElementById('tableCount').textContent = `${assessments.length} Records`;
+
+                if (assessments.length === 0) {
+                    document.getElementById('pointsTable').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No assessment history found.</td></tr>';
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    return;
+                }
+
+                let totalReading = 0;
+                let totalWriting = 0;
+                let totalSpeaking = 0;
+                let maxR = 0, maxW = 0, maxS = 0;
+                let bestTot = 0;
+
+                const tableBody = document.getElementById('pointsTable');
+                tableBody.innerHTML = '';
+
+                assessments.forEach((test, index) => {
+                    totalReading += test.reading;
+                    totalWriting += test.writing;
+                    totalSpeaking += test.speaking;
+
+                    if (test.reading > maxR) maxR = test.reading;
+                    if (test.writing > maxW) maxW = test.writing;
+                    if (test.speaking > maxS) maxS = test.speaking;
+
+                    const total = test.reading + test.writing + test.speaking;
+                    if (total > bestTot) bestTot = total;
+
+                    const overall = Math.round(total / 3);
+
+                    let scoreClass = 'score-low';
+                    if (overall >= 80) scoreClass = 'score-good';
+                    else if (overall >= 50) scoreClass = 'score-avg';
+
+                    let progressText = '---';
+                    if (index > 0) {
+                        const prevTest = assessments[index - 1];
+                        const prevOverall = Math.round((prevTest.reading + prevTest.writing + prevTest.speaking) / 3);
+                        const diff = overall - prevOverall;
+                        if (diff > 0) progressText = `<span style="color:var(--success)"><i class="fa-solid fa-arrow-trend-up"></i> +${diff}%</span>`;
+                        else if (diff < 0) progressText = `<span style="color:var(--danger)"><i class="fa-solid fa-arrow-trend-down"></i> ${diff}%</span>`;
+                        else progressText = `<span style="color:var(--text-muted)"><i class="fa-solid fa-minus"></i> 0%</span>`;
+                    }
+
+                    const testDate = new Date(test.date);
+                    const formattedDate = testDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${formattedDate}</td>
+                        <td>${test.reading}</td>
+                        <td>${test.writing}</td>
+                        <td>${test.speaking}</td>
+                        <td><strong>${total}/300</strong></td>
+                        <td><span class="score-badge ${scoreClass}">${overall}%</span></td>
+                        <td>${progressText}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                const count = assessments.length;
+                const avgR = Math.round(totalReading / count);
+                const avgW = Math.round(totalWriting / count);
+                const avgS = Math.round(totalSpeaking / count);
+                const overallAvg = Math.round((avgR + avgW + avgS) / 3);
+
+                document.getElementById('avgScore').textContent = `${overallAvg}%`;
+                document.getElementById('avgReading').textContent = avgR;
+                document.getElementById('avgWriting').textContent = avgW;
+                document.getElementById('avgSpeaking').textContent = avgS;
+                document.getElementById('bestScore').textContent = `${bestTot}/300`;
+                
+                document.getElementById('maxReading').textContent = maxR;
+                document.getElementById('maxWriting').textContent = maxW;
+                document.getElementById('maxSpeaking').textContent = maxS;
+
+                if (count > 1) {
+                    const firstTest = assessments[0];
+                    const firstAvg = (firstTest.reading + firstTest.writing + firstTest.speaking) / 3;
+                    const lastTest = assessments[count - 1];
+                    const lastAvg = (lastTest.reading + lastTest.writing + lastTest.speaking) / 3;
+                    const diff = Math.round(lastAvg - firstAvg);
+                    if (diff > 0) {
+                        document.getElementById('improvement').textContent = `+${diff}%`;
+                        document.getElementById('improvement').style.color = 'var(--success)';
+                    } else {
+                        document.getElementById('improvement').textContent = `${diff}%`;
+                        document.getElementById('improvement').style.color = diff < 0 ? 'var(--danger)' : 'var(--text-muted)';
+                    }
+                } else {
+                    document.getElementById('improvement').textContent = '0%';
+                }
+
+                initCharts(assessments);
+
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+
+            function initCharts(assessments) {
+                const labels = assessments.map(a => {
+                    const date = new Date(a.date);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                });
+                const readingData = assessments.map(a => a.reading);
+                const writingData = assessments.map(a => a.writing);
+                const speakingData = assessments.map(a => a.speaking);
+                const averages = assessments.map(a => Math.round((a.reading + a.writing + a.speaking) / 3));
+
+                const gridColor = getGridColor();
+                const isDark = body.classList.contains('dark');
+                const textColor = isDark ? '#94a3b8' : '#6b7280';
+
+                // 1. Mixed Chart
+                charts.mixed = new Chart(document.getElementById('mixedChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Overall Average',
+                                data: averages,
+                                type: 'line',
+                                borderColor: '#4F46E5',
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Reading',
+                                data: readingData,
+                                backgroundColor: 'rgba(129, 140, 248, 0.4)',
+                                borderColor: '#818CF8',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Writing',
+                                data: writingData,
+                                backgroundColor: 'rgba(236, 72, 153, 0.4)',
+                                borderColor: '#EC4899',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Speaking',
+                                data: speakingData,
+                                backgroundColor: 'rgba(245, 158, 11, 0.4)',
+                                borderColor: '#F59E0B',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 2. Reading Chart
+                charts.reading = new Chart(document.getElementById('readingChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Reading',
+                            data: readingData,
+                            borderColor: '#818CF8',
+                            backgroundColor: 'rgba(129, 140, 248, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 3. Writing Chart
+                charts.writing = new Chart(document.getElementById('writingChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Writing',
+                            data: writingData,
+                            borderColor: '#EC4899',
+                            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 4. Speaking Chart
+                charts.speaking = new Chart(document.getElementById('speakingChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Speaking',
+                            data: speakingData,
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 5. Radar Chart
+                const avgR = Math.round(readingData.reduce((a, b) => a + b, 0) / readingData.length) || 0;
+                const avgW = Math.round(writingData.reduce((a, b) => a + b, 0) / writingData.length) || 0;
+                const avgS = Math.round(speakingData.reduce((a, b) => a + b, 0) / speakingData.length) || 0;
+                charts.radar = new Chart(document.getElementById('radarChart'), {
+                    type: 'radar',
+                    data: {
+                        labels: ['Reading', 'Writing', 'Speaking'],
+                        datasets: [{
+                            label: 'Overall Skill Level',
+                            data: [avgR, avgW, avgS],
+                            backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                            borderColor: '#4F46E5',
+                            pointBackgroundColor: '#4F46E5'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                min: 0,
+                                max: 100,
+                                grid: { color: gridColor },
+                                angleLines: { color: gridColor },
+                                pointLabels: { color: textColor }
+                            }
+                        }
+                    }
+                });
+
+                // 6. Polar Chart
+                charts.polar = new Chart(document.getElementById('polarChart'), {
+                    type: 'polarArea',
+                    data: {
+                        labels: ['Reading Avg', 'Writing Avg', 'Speaking Avg'],
+                        datasets: [{
+                            data: [avgR, avgW, avgS],
+                            backgroundColor: [
+                                'rgba(129, 140, 248, 0.6)',
+                                'rgba(236, 72, 153, 0.6)',
+                                'rgba(245, 158, 11, 0.6)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                grid: { color: gridColor },
+                                ticks: { backdropColor: 'transparent', color: textColor }
+                            }
+                        }
+                    }
+                });
+
+                // 7. Doughnut Chart
+                const lastTest = assessments[assessments.length - 1];
+                charts.doughnut = new Chart(document.getElementById('doughnutChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Reading', 'Writing', 'Speaking'],
+                        datasets: [{
+                            data: [lastTest.reading, lastTest.writing, lastTest.speaking],
+                            backgroundColor: ['#818CF8', '#EC4899', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                // 8. Scatter Chart
+                const scatterData = assessments.map(a => ({ x: a.reading, y: a.writing }));
+                charts.scatter = new Chart(document.getElementById('scatterChart'), {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Reading vs Writing',
+                            data: scatterData,
+                            backgroundColor: '#EC4899'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { min: 0, max: 100, title: { display: true, text: 'Reading', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, title: { display: true, text: 'Writing', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 9. Bubble Chart
+                const bubbleData = assessments.map(a => ({
+                    x: a.speaking,
+                    y: a.writing,
+                    r: Math.max(a.reading / 5, 4) // minimum size 4
+                }));
+                charts.bubble = new Chart(document.getElementById('bubbleChart'), {
+                    type: 'bubble',
+                    data: {
+                        datasets: [{
+                            label: 'Speaking(X) / Writing(Y) / Reading(Size)',
+                            data: bubbleData,
+                            backgroundColor: 'rgba(6, 182, 212, 0.6)',
+                            borderColor: '#06B6D4'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { min: 0, max: 100, title: { display: true, text: 'Speaking', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, title: { display: true, text: 'Writing', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 10. Stacked Bar Chart
+                charts.stackedBar = new Chart(document.getElementById('stackedBarChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Reading', data: readingData, backgroundColor: '#818CF8' },
+                            { label: 'Writing', data: writingData, backgroundColor: '#EC4899' },
+                            { label: 'Speaking', data: speakingData, backgroundColor: '#F59E0B' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { stacked: true, min: 0, max: 300, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+
+                // 11. Area Chart
+                charts.area = new Chart(document.getElementById('areaChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Reading Trend',
+                            data: readingData,
+                            fill: true,
+                            backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                            borderColor: '#4F46E5',
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            y: { min: 0, max: 100, grid: { color: gridColor }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+            }
+
+            // Start loading data for student session
+            loadProfile();
+        })();
+    </script>
+</body>
+</html>
